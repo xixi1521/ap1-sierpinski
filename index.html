@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>AP1 - Sierpinski Gasket</title>
+<style>
+  body { font-family: "Microsoft YaHei", sans-serif; background: #f4f4f6; margin: 20px; }
+  h1 { font-size: 20px; }
+  .container { display: flex; gap: 20px; align-items: flex-start; }
+  canvas { background: #ffffff; border: 1px solid #999; cursor: grab; }
+  canvas:active { cursor: grabbing; }
+  .panel {
+    background: #fff; border: 1px solid #ccc; border-radius: 8px;
+    padding: 16px; width: 280px; font-size: 14px;
+  }
+  .panel h2 { font-size: 15px; margin: 0 0 10px; }
+  .panel label { display: block; margin: 10px 0 4px; }
+  .panel input[type=range] { width: 100%; }
+  .panel select { width: 100%; }
+  .panel .val { color: #666; font-size: 12px; }
+  .hint { margin-top: 12px; font-size: 12px; color: #888; line-height: 1.7; }
+</style>
+</head>
+<body>
+<h1>AP1 · Sierpinski Gasket</h1>
+<div class="container">
+  <canvas id="gl-canvas" width="640" height="640"></canvas>
+  <div class="panel">
+    <h2>Control Panel</h2>
+    <label>Render Mode</label>
+    <label><input type="radio" name="mode" value="chaosPoints" checked> 1 Chaos‑Point</label>
+    <label><input type="radio" name="mode" value="subPoints"> 1‑2 Subdiv‑Point</label>
+    <label><input type="radio" name="mode" value="subWireframe"> 2 Subdiv‑Wireframe</label>
+    <label><input type="radio" name="mode" value="subSolid"> 3 Subdiv‑Solid</label>
+
+    <label>Point Count(Chaos) <span class="val" id="numVal">5000</span></label>
+    <input type="range" id="numPoints" min="500" max="20000" step="500" value="5000">
+
+    <label>Sub Depth <span class="val" id="depthVal">4</span></label>
+    <input type="range" id="depth" min="0" max="6" step="1" value="4">
+
+    <label>Point Size <span class="val" id="sizeVal">2.0</span></label>
+    <input type="range" id="pointSize" min="1" max="10" step="0.5" value="2">
+
+    <label>Color Scheme</label>
+    <select id="scheme">
+      <option value="0">Classic Black</option>
+      <option value="1">Ocean Blue</option>
+      <option value="2">Sunset Orange</option>
+      <option value="3">Forest Green</option>
+    </select>
+
+    <div class="hint">
+      Drag Left‑Mouse: Pan<br>
+      Mouse Wheel: Zoom<br>
+      Key 1 / 2 /3: Switch Mode<br>
+      Space: Pause / Resume growth animation<br>
+    </div>
+  </div>
+</div>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+#version 300 es
+in vec4 aPosition;
+uniform vec2  uOffset;
+uniform float uScale;
+uniform float uPointSize;
+void main()
+{
+    vec2 p = aPosition.xy * uScale + uOffset;
+    gl_Position = vec4(p, 0.0, 1.0);
+    gl_PointSize = uPointSize;
+}
+</script>
+<script id="fragment-shader" type="x-shader/x-fragment">
+#version 300 es
+precision mediump float;
+uniform vec4 uColor;
+out vec4 fColor;
+void main()
+{
+    fColor = uColor;
+}
+</script>
+
+<script type="text/javascript" src="gasket.js"></script>
+</body>
+</html>
